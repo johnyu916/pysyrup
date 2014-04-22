@@ -8,7 +8,9 @@ from .translator import Translator
 
 import path
 syrup = None
-def get_syrup():
+
+# let's not use this.
+def get_syrup_old():
     global syrup
     if syrup is None:
         syrup = Syrup()
@@ -18,10 +20,9 @@ class Syrup(object):
     '''
     load function text at any time. also read functions from file.
     '''
-    def __init__(self):
+    def __init__(self, settings):
         self.functions = []
-        with open('syrup/settings.json') as f:
-            self.settings = json.loads(f.read())
+        self.settings = settings
 
     def read(self):
         source_dir = path.path(self.settings['source'])
@@ -49,13 +50,6 @@ class Syrup(object):
             logging.debug('function:\n{}'.format(function))
         translator = Translator(output_path, parser)
 
-    def read_old(self, file_descriptor):
-        parser = Parser(file_descriptor)
-        logging.debug("parser finished.")
-        for function in parser.functions:
-            logging.debug('function:\n{}'.format(function))
-        semantics = Semantics(parser.functions)
-        self.functions = semantics.library.functions
 
     def run(self, function_name, inputs):
         # look for function name and run it.
