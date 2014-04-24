@@ -122,9 +122,10 @@ def expression_translate(expression):
                     return 'range' + structure_make(children, make_int=True)
                 elif data == INSERT:
                     assert len(children) == 3, 'operation {} but does not have 3 args: {}'.format(data, len(children))
+                    children[1] = "int(" + children[1] + ")"
                     return children[0] + '.insert' + structure_make(children[1:])
                 elif data == POP:
-                    return children[0]+ '.pop' + structure_make(children, make_int=True)
+                    return children[0]+ '.pop' + structure_make(children[1:], make_int=True)
                 elif data == EXTEND:
                     return children[0] + '.extend(' + children[1] + ')'
                 elif data == SQUARE_ROOT:
