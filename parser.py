@@ -77,6 +77,13 @@ class Token(object):
             'value': str(self)
         }
 
+class Ignore(Token):
+    pass
+
+class Pound(Token):
+    def __init__(self):
+        super(Pound, self).__init__('#')
+
 class LeftBrace(Token):
     def __init__(self):
         super(LeftBrace, self).__init__('{')
@@ -102,6 +109,7 @@ class RightBrace(Token):
         super(RightBrace, self).__init__('}')
 
 GROUP_CLASSES = ((LeftParen, RightParen), (LeftBracket, RightBracket), (LeftBrace, RightBrace))
+
 
 class Comma(Token):
     def __init__(self):
@@ -430,7 +438,7 @@ def get_stack_index(line):
     '''
     num = get_num_front_spaces(line)
     if not (num % 4) == 0:
-        raise Exception("Wrong number of spaces")
+        raise Exception("Wrong number of spaces: {}".format(num))
     return num/4
 
 def read_flow_control(tokens):
@@ -570,22 +578,36 @@ def has_grouper(orig):
 
     return len(stack) > 0
 
-def read_tokens(text, descriptor):
+class EOFException(Exception):
+    pass
+
+# tokens is None if end of file.
+def read_tokens(descriptor):
+    text = descriptor.readline()
+    if len(text) == 0: # end of file
+        raise EOFException()
     tokens = []
+    texts = [text]
+    stack_index = get_stack_index(text)
+    text = text.strip()
     while True:
         read_tokens_from_text(text, tokens)
         #print "read_expression stack: ", stack
         if has_grouper(tokens):
-            text = descriptor.readline().rstrip()
+            text = descriptor.readline()
+            if len(text) == 0:
+                raise Exception("End of file reached wih unclosed statemnt")
+            texts.append(text)
+            text = text.rstrip()
         else:
             break
-    return tokens
+    return tokens, stack_index, texts
 
 def read_expression_lines(lines):
     """
     Lines is a list of strings
     """
-    tokens = read_tokens(lines[0], StringIO(string.join(lines[1:])))
+    tokens, stack_index, texts = read_tokens(StringIO(string.join(lines)))
     return build_expression(tokens)
 
 def read_expression_line(text):
@@ -701,7 +723,16 @@ def read_tokens_from_text(text, stack):
             stack.append(Colon())
             continue
 
-        raise Exception("Unknown character encountered: {}".format(text))
+        pound, text = re_match('#', text)
+        if pound is not None:
+            stack.append(Pound())
+            continue
+
+        char = text[0]
+        stack.append(Ignore(char))
+        text = text[1:]
+
+        #raise Exception("Unknown character encountered: {}".format(text))
 
 
 def read_enclosed(stack):
@@ -1340,33 +1371,45 @@ def empty_or_exception(tokens):
     if len(tokens) > 0:
         raise Exception("Syntax error")
 
+text = ""
 
 class Parser(object):
     # parse program text.
-    def __init__(self, descriptor):
+    def __init__(self, source_path):
         self.stack = []
         self.functions = []
         self.imports = []
+        lines = 0
+        with open(source_path) as descriptor:
+            while True:
+                try:
+                    tokens, stack_index, texts = read_tokens(descriptor)
+                    lines += len(texts)
+                except EOFException:
+                    break
+                tokens = self.parse_statement(tokens, stack_index)
+                if len(tokens) != 0:
+                    raise Exception("{}. line: {} Syntax error occurred during: {}", source_path, lines, texts)
 
-        while True:
-            more, tokens = self.parse_statement(descriptor)
-            if not more:
-                break # done reading
-            if len(tokens) != 0:
-                raise Exception("Syntax error occurred")
-
-    def parse_statement(self, descriptor):
-        line = descriptor.readline()
-        logging.debug("parse_statement: <{}>".format(line))
-        if len(line) == 0:
-            return False, []
-        line = line.rstrip()
+    def parse_statement(self, tokens, stack_index):
+        """
+        tokens is a list of length 0 or more.
+        stack_index is number of spaces divided by 0.
+        """
+        #line = descriptor.readline()
+        #logging.debug("parse_statement: <{}>".format(line))
+        #if len(line) == 0:
+        #    return False, []
+        #line = line.rstrip()
 
         # how many spaces are in front?
-        stack_index = get_stack_index(line)
-        line = line.strip()
-        if line == '' or line[0] == '#':
-            return True, []
+        #stack_index = get_stack_index(line)
+        #line = line.strip()
+        if len(tokens) == 0:
+            return tokens
+        if isinstance(tokens[0], Pound):
+            return []
+
         if stack_index < len(self.stack):
             num_pop = len(self.stack) - stack_index
             while num_pop > 0:
@@ -1376,8 +1419,6 @@ class Parser(object):
             logging.debug("stack index: {} stack: {}".format(stack_index, self.stack))
             raise Exception("spaced too much")
 
-        tokens = read_tokens(line, descriptor)
-
         # Either function or import
         if stack_index == 0:
             function, tokens = read_function_definition(tokens)
@@ -1386,13 +1427,13 @@ class Parser(object):
                 self.functions.append(function)
                 self.stack.append(function)
                 logging.debug("Read function defition")
-                return True, tokens
+                return tokens
 
             import_statement, tokens = read_import(tokens)
             if import_statement is not None:
                 empty_or_exception(tokens)
                 self.imports.append(import_statement)
-                return True, tokens
+                return tokens
             raise Exception("Function not found with no spaces", line)
 
         block = self.stack[-1]
@@ -1400,7 +1441,7 @@ class Parser(object):
         control_clause, tokens = read_flow_control(tokens)
         if control_clause is not None:
             block.code.append(control_clause)
-            return True, tokens
+            return tokens
 
         # conditional (if, elif, else, while)
         while_clause, tokens = read_while(tokens)
@@ -1408,14 +1449,14 @@ class Parser(object):
             block.code.append(while_clause)
             self.stack.append(while_clause)
             logging.debug("Read while statement")
-            return True, tokens
+            return tokens
 
         for_clause, tokens = read_for(tokens)
         if for_clause:
             block.code.append(for_clause)
             self.stack.append(for_clause)
             logging.debug("Read for statement")
-            return True, tokens
+            return tokens
 
         if_clause, tokens = read_if(tokens)
         if if_clause:
@@ -1423,7 +1464,7 @@ class Parser(object):
             block.code.append(if_clause)
             self.stack.append(if_clause)
             logging.debug("Read if statement")
-            return True, tokens
+            return tokens
 
         elif_clause, tokens = read_elif(tokens)
         if elif_clause:
@@ -1431,7 +1472,7 @@ class Parser(object):
             logging.debug("Read elif statement")
             block.code.append(elif_clause)
             self.stack.append(elif_clause)
-            return True, tokens
+            return tokens
 
         else_clause, tokens = read_else(tokens)
         if else_clause:
@@ -1439,20 +1480,20 @@ class Parser(object):
             #print "else read: {0}".format(else_clause.get_dict())
             block.code.append(else_clause)
             self.stack.append(else_clause)
-            return True, tokens
+            return tokens
 
         assignment, tokens = read_assignment(tokens)
         if assignment:
             logging.debug("Read assignment")
             #print "assignment read: {0}. appending to: {1}".format(assignment, block)
             block.code.append(assignment)
-            return True, tokens
+            return tokens
 
         expression, tokens = build_expression(tokens)
         if expression is not None:
             logging.debug("Read expression")
             #print "expression read: {0}".format(expression)
             block.code.append(expression)
-            return True, tokens
+            return tokens
 
-        return True, tokens
+        return tokens

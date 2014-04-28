@@ -36,15 +36,13 @@ class Syrup(object):
             f.write('\n')
 
         for source_path in source_dir.files("*.syrup"):
-            print source_path
-            with open(source_path) as f:
-                out_filename = source_path.name.split('.')[0] + '.py'
-                self.read_file(f, output_dir / out_filename)
+            out_filename = source_path.name.split('.')[0] + '.py'
+            self.read_file(source_path, output_dir / out_filename)
         for subdir in source_dir.dirs():
             self.read_dir(subdir, output_dir / subdir.name)
 
-    def read_file(self, file_descriptor, output_path):
-        parser = Parser(file_descriptor)
+    def read_file(self, source_path, output_path):
+        parser = Parser(source_path)
         logging.debug("parser finished.")
         for function in parser.functions:
             logging.debug('function:\n{}'.format(function))
