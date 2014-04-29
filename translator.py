@@ -1,5 +1,5 @@
 from .parser import (
-    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, NULL, BREAK, RETURN, PRINT, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE,
+    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -140,6 +140,10 @@ def expression_translate(expression):
                     return 'math.sin(' + children[0] + ')'
                 elif data == PRINT:
                     return 'print ' + children[0]
+                elif data == INTEGER_STRING:
+                    return 'str(int(' + children[0] + '))'
+                elif data == STRING:
+                    return 'str(' + children[0] + ')'
                 else:
                     raise Exception("Not implemented: {}".format(data))
             else:
