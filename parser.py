@@ -45,6 +45,7 @@ INSERT = 'insert'
 EXTEND = 'extend'
 RANGE = 'range'
 POP = 'pop'
+REMOVE = 'remove'
 SQUARE_ROOT = 'square_root'
 RADIANS = 'radians'
 TAN = 'tan'
@@ -57,7 +58,7 @@ PRINT = 'print'
 INTEGER_STRING = 'integer_string'
 
 
-BUILT_IN_FUNCTIONS = [ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, POP, APPEND, INSERT, EXTEND, SQUARE_ROOT, RADIANS, TAN, COS, SIN, PRINT, INTEGER_STRING, STRING]
+BUILT_IN_FUNCTIONS = [ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, POP, REMOVE, APPEND, INSERT, EXTEND, SQUARE_ROOT, RADIANS, TAN, COS, SIN, PRINT, INTEGER_STRING, STRING]
 
 PARENS = 'parens'
 BRACKETS = 'brackets'
@@ -1381,6 +1382,7 @@ class Parser(object):
         self.functions = []
         self.imports = []
         lines = 0
+        texts = []
         with open(source_path) as descriptor:
             while True:
                 try:
@@ -1388,9 +1390,11 @@ class Parser(object):
                     lines += len(texts)
                 except EOFException:
                     break
+                except Exception as e:
+                    raise Exception("{}. line: {} Error occurred after: {}\n {}", source_path, lines, texts, e)
                 tokens = self.parse_statement(tokens, stack_index)
                 if len(tokens) != 0:
-                    raise Exception("{}. line: {} Syntax error occurred during: {}", source_path, lines, texts)
+                    raise Exception("{}. line: {} Syntax error occurred during: {}. tokens = {}", source_path, lines, texts, tokens)
 
     def parse_statement(self, tokens, stack_index):
         """

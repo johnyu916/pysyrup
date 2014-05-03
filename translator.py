@@ -1,5 +1,5 @@
 from .parser import (
-    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE,
+    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -126,6 +126,8 @@ def expression_translate(expression):
                     return children[0] + '.insert' + structure_make(children[1:])
                 elif data == POP:
                     return children[0]+ '.pop' + structure_make(children[1:], make_int=True)
+                elif data == REMOVE:
+                    return children[0]+ '.remove' + structure_make(children[1])
                 elif data == EXTEND:
                     return children[0] + '.extend(' + children[1] + ')'
                 elif data == SQUARE_ROOT:
