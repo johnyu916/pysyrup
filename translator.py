@@ -127,7 +127,7 @@ def expression_translate(expression):
                 elif data == POP:
                     return children[0]+ '.pop' + structure_make(children[1:], make_int=True)
                 elif data == REMOVE:
-                    return children[0]+ '.remove' + structure_make(children[1])
+                    return children[0]+ '.remove(' + children[1] + ')'
                 elif data == EXTEND:
                     return children[0] + '.extend(' + children[1] + ')'
                 elif data == SQUARE_ROOT:
