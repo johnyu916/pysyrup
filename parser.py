@@ -1383,16 +1383,17 @@ class Parser(object):
         self.imports = []
         lines = 0
         texts = []
+        tokens = []
         with open(source_path) as descriptor:
             while True:
                 try:
                     tokens, stack_index, texts = read_tokens(descriptor)
                     lines += len(texts)
+                    tokens = self.parse_statement(tokens, stack_index)
                 except EOFException:
                     break
                 except Exception as e:
                     raise Exception("{}. line: {} Error occurred after: {}\n {}", source_path, lines, texts, e)
-                tokens = self.parse_statement(tokens, stack_index)
                 if len(tokens) != 0:
                     raise Exception("{}. line: {} Syntax error occurred during: {}. tokens = {}", source_path, lines, texts, tokens)
 
