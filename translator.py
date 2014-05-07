@@ -1,5 +1,5 @@
 from .parser import (
-    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE,
+    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, READ, WRITE, CLOSE,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -102,7 +102,13 @@ def expression_translate(expression):
             return data
         else:
             if data in BUILT_IN_FUNCTIONS:
-                if data == ARRAY_MAKE:
+                if data == READ:
+                    return children[0] + '.read(' + children[1] + ')'
+                elif data == WRITE:
+                    return children[0] + '.write' + structure_make(children[1:])
+                elif data == CLOSE:
+                    return children[0] + '.close()'
+                elif data == ARRAY_MAKE:
                     return structure_make(children, BRACKETS)
                 elif data == ARRAY_GET:
                     assert len(children) == 2, 'operation {} but does not have 2 args: {}'.format(data, len(children))
@@ -144,8 +150,10 @@ def expression_translate(expression):
                     return 'print ' + children[0]
                 elif data == INTEGER_STRING:
                     return 'str(int(' + children[0] + '))'
-                elif data == STRING:
-                    return 'str(' + children[0] + ')'
+                elif data == FROM_JSON:
+                    return 'json.dumps(' + children[0] + ')'
+                elif data == TO_JSON:
+                    return 'json.loads(' + children[0] + ')'
                 else:
                     raise Exception("Not implemented: {}".format(data))
             else:
@@ -222,7 +230,9 @@ def code_block_translate(code_block, tab, function):
 class Translator(object):
     def __init__(self, output_path, parser):
         with open(output_path, 'w') as f:
-            f.write('import math\n\n')
+            f.write('import math\n')
+            f.write('from time import time\n')
+            f.write('import json\n\n')
             for import_line in parser.imports:
                 text = import_translate(import_line)
                 f.write(text + '\n')

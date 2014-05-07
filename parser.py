@@ -34,11 +34,26 @@ VARIABLE_PATTERN = '[a-zA-Z][a-zA-Z0-9_]*'
 #STRING_PATTERN = '\"[a-zA-Z0-9_]+\"'
 STRING_PATTERN ='\"(?P<word>[a-zA-Z0-9_ .,]*)\"'
 
-ARRAY_MAKE = '__list_make__'
-#OBJECT_MAKE = '__object_make__'
-ARRAY_GET = '__array_get__'
-OBJECT_GET = '__object_get__'
+BUILT_IN_FUNCTIONS = set()
+
+# file functions
+OPEN = 'open'
+READ = 'read'
+WRITE = 'write'
+CLOSE = 'close'
+
+# open is not here since no need for translation.
+BUILT_IN_FUNCTIONS.update([READ, WRITE, CLOSE])
+
+# object methods
 KEYS = 'keys'
+OBJECT_GET = '__object_get__'
+
+BUILT_IN_FUNCTIONS.update([KEYS, OBJECT_GET])
+
+# array methods
+ARRAY_MAKE = '__array_make__'
+ARRAY_GET = '__array_get__'
 LENGTH = 'length'
 APPEND = 'append'
 INSERT = 'insert'
@@ -46,19 +61,29 @@ EXTEND = 'extend'
 RANGE = 'range'
 POP = 'pop'
 REMOVE = 'remove'
+BUILT_IN_FUNCTIONS.update( [ARRAY_MAKE, ARRAY_GET, LENGTH, RANGE, POP, REMOVE, APPEND, INSERT, EXTEND] )
+
+# math functions
 SQUARE_ROOT = 'square_root'
 RADIANS = 'radians'
 TAN = 'tan'
 COS = 'cos'
 SIN = 'sin'
+
+BUILT_IN_FUNCTIONS.update([SQUARE_ROOT, RADIANS, TAN, COS, SIN])
+
+# etc
+TIME = 'time'
+PRINT = 'print'
+INTEGER_STRING = 'integer_string'
+TO_JSON = 'to_json'
+FROM_JSON = 'from_json'
+BUILT_IN_FUNCTIONS.update( [PRINT, INTEGER_STRING, TO_JSON, FROM_JSON])
+# control statements
 CONTINUE = 'continue'
 BREAK = 'break'
 RETURN = 'return'
-PRINT = 'print'
-INTEGER_STRING = 'integer_string'
 
-
-BUILT_IN_FUNCTIONS = [ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, POP, REMOVE, APPEND, INSERT, EXTEND, SQUARE_ROOT, RADIANS, TAN, COS, SIN, PRINT, INTEGER_STRING, STRING]
 
 PARENS = 'parens'
 BRACKETS = 'brackets'
@@ -869,7 +894,6 @@ def read_symbols(orig, cls):
     tokens = copy.copy(orig)
 
     chars = ''
-    symbols = []
     while True:
         if len(tokens) > 0 and isinstance(tokens[0], Symbol):
             symbol = tokens.pop(0)
@@ -1440,7 +1464,7 @@ class Parser(object):
                 empty_or_exception(tokens)
                 self.imports.append(import_statement)
                 return tokens
-            raise Exception("Function not found with no spaces", line)
+            raise Exception("Function not found with no spaces")
 
         block = self.stack[-1]
 
