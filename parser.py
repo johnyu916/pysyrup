@@ -37,13 +37,9 @@ STRING_PATTERN ='\"(?P<word>[a-zA-Z0-9_ .,]*)\"'
 BUILT_IN_FUNCTIONS = set()
 
 # file functions
-OPEN = 'open'
-READ = 'read'
-WRITE = 'write'
-CLOSE = 'close'
-
-# open is not here since no need for translation.
-BUILT_IN_FUNCTIONS.update([READ, WRITE, CLOSE])
+FILE_READ = 'file_read'
+FILE_WRITE = 'file_write'
+BUILT_IN_FUNCTIONS.update([FILE_READ, FILE_WRITE])
 
 # object methods
 KEYS = 'keys'
