@@ -149,7 +149,7 @@ def expression_translate(expression):
                 elif data == SIN:
                     return ['math.sin(' + children[0] + ')']
                 elif data == PRINT:
-                    return ['print ' + children[0]]
+                    return ['print json.dumps(' + children[0] + ')']
                 elif data == INTEGER_STRING:
                     return ['str(int(' + children[0] + '))']
                 elif data == FROM_JSON:
