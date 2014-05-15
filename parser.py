@@ -74,7 +74,9 @@ PRINT = 'print'
 INTEGER_STRING = 'integer_string'
 TO_JSON = 'to_json'
 FROM_JSON = 'from_json'
-BUILT_IN_FUNCTIONS.update( [PRINT, INTEGER_STRING, TO_JSON, FROM_JSON])
+ASSERT = 'assert'
+BUILT_IN_FUNCTIONS.update( [PRINT, INTEGER_STRING, TO_JSON, FROM_JSON, ASSERT])
+
 # control statements
 CONTINUE = 'continue'
 BREAK = 'break'
@@ -868,9 +870,18 @@ def build_non_operation(orig):
     if expression is not None:
         return expression, tokens
 
+    expression, left_tokens = build_array_make(tokens)
+    if expression is not None:
+        return expression, left_tokens
+
+    expression, left_tokens = build_dict_make(tokens)
+    if expression is not None:
+        return expression, left_tokens
+
     expression, tokens = build_constant_or_variable(tokens)
     if expression is not None:
         return expression, tokens
+
     return None, tokens
 
 def matched_operator(chars, cls):

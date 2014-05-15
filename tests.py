@@ -47,6 +47,12 @@ def test_expression():
     print "test_expression {} {}".format(expression, left)
     assert expression is not None and len(left) == 0
 
+    lines = [
+        'assert(matrix == [[1,2,3],[4,5,6]])'
+    ]
+    expression, left = read_expression_lines(lines)
+    print "test_expression assert {} {}".format(expression, left)
+    assert expression is not None and len(left) == 0
 
 def test_assignment():
     print "Testing assignments"

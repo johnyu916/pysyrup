@@ -1,5 +1,5 @@
 from .parser import (
-    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE,
+    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, ASSERT,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -133,7 +133,12 @@ def expression_translate(expression):
                     children[1] = "int(" + children[1] + ")"
                     return [children[0] + '.insert' + structure_make(children[1:])]
                 elif data == POP:
-                    return [children[0]+ '.pop' + structure_make(children[1:], make_int=True)]
+                    result = children[0]+ '.pop'
+                    if len(children) == 1:
+                        result += '()'
+                    else:
+                        result += structure_make(children[1:], make_int=True)
+                    return [result]
                 elif data == REMOVE:
                     return [children[0]+ '.remove(' + children[1] + ')']
                 elif data == EXTEND:
@@ -156,6 +161,8 @@ def expression_translate(expression):
                     return ['json.dumps(' + children[0] + ')']
                 elif data == TO_JSON:
                     return ['json.loads(' + children[0] + ')']
+                elif data == ASSERT:
+                    return ['assert ' + children[0] + ', ' + children[1]]
                 else:
                     raise Exception("Not implemented: {}".format(data))
             else:
@@ -242,13 +249,19 @@ def code_block_translate(code_block, tab, function):
 class Translator(object):
     def __init__(self, output_path, parser):
         with open(output_path, 'w') as f:
-            f.write('import math\n')
-            f.write('from time import time\n')
-            f.write('import json\n\n')
-            for import_line in parser.imports:
-                text = import_translate(import_line)
-                f.write(text + '\n')
-            f.write('\n')
-            for function in parser.functions:
-                text = function_translate(function)
-                f.write(text + '\n\n')
+            try:
+                f.write('import math\n')
+                f.write('from time import time\n')
+                f.write('import json\n\n')
+                for import_line in parser.imports:
+                    text = import_translate(import_line)
+                    f.write(text + '\n')
+                f.write('\n')
+                for function in parser.functions:
+                    try:
+                        text = function_translate(function)
+                        f.write(text + '\n\n')
+                    except Exception as e:
+                        raise Exception("Function translate error for {}: {}".format(function.name, e))
+            except Exception as e:
+                raise Exception("File translate error at {}: {}".format(output_path, e))
