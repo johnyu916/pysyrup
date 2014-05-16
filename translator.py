@@ -107,7 +107,7 @@ def expression_translate(expression):
                     second = '    ' + children[1] + ' = f.read()'
                     return [first, second]
                 elif data == FILE_WRITE:
-                    first = 'with open(' + children[0] + ') as f:'
+                    first = 'with open(' + children[0] + ', "w") as f:'
                     second = '    f.write(' + children[1] + ')'
                     return [first, second]
                 elif data == ARRAY_MAKE:
