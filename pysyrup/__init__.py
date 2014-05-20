@@ -7,14 +7,6 @@ from .translator import Translator
 #from .processor import Processor
 
 import path
-syrup = None
-
-# let's not use this.
-def get_syrup_old():
-    global syrup
-    if syrup is None:
-        syrup = Syrup()
-    return syrup
 
 class Syrup(object):
     '''
@@ -26,7 +18,7 @@ class Syrup(object):
 
     def read(self):
         source_dir = path.path(self.settings['source'])
-        output_dir = path.path(self.settings['output'])
+        output_dir = path.path(self.settings['python_output'])
         output_dir.makedirs_p() 
         self.read_dir(source_dir, output_dir)
 
