@@ -60,6 +60,11 @@ def test_assignment():
     assert expression is not None
     print "{}".format(expression)
 
+    line = 'text = null'
+    expression = read_assignment_line(line)
+    assert expression is not None
+    print "test assignment 0: {}".format(expression)
+
     expression = read_assignment_line('sum += 5')
     assert expression is not None
     print "{}".format(expression)
@@ -145,9 +150,15 @@ def test_parser():
     print "test parser 4: {}".format(expression)
 
     line = '{ "position": [0,0,0], "bob": "dole", "nice": "brother" }'
-    expression, left = read_expression_lines(line)
+    expression, left = read_expression_line(line)
     assert expression is not None
     print "test parser 5: {}".format(expression)
+
+    line = 'file_read(join([state.things_dir, "/", state.thing_name]), text)'
+    expression, left = read_expression_line(line)
+    assert expression is not None
+    print "test parser 6: {}".format(expression)
+
 
 if __name__ == '__main__':
     test_parser()

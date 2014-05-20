@@ -32,7 +32,7 @@ RESERVED_WORDS = copy.copy(TYPES)
 RESERVED_WORDS.extend(CONDITIONAL_WORDS)
 VARIABLE_PATTERN = '[a-zA-Z][a-zA-Z0-9_]*'
 #STRING_PATTERN = '\"[a-zA-Z0-9_]+\"'
-STRING_PATTERN ='\"(?P<word>[a-zA-Z0-9_ .,]*)\"'
+STRING_PATTERN ='\"(?P<word>[a-zA-Z0-9_ .,/:]*)\"'
 
 BUILT_IN_FUNCTIONS = set()
 
@@ -59,6 +59,10 @@ RANGE = 'range'
 POP = 'pop'
 REMOVE = 'remove'
 BUILT_IN_FUNCTIONS.update( [ARRAY_MAKE, ARRAY_GET, LENGTH, RANGE, POP, REMOVE, APPEND, INSERT, EXTEND] )
+
+# string methods
+JOIN = 'join'
+BUILT_IN_FUNCTIONS.update( [JOIN] )
 
 # math functions
 SQUARE_ROOT = 'square_root'
@@ -617,7 +621,10 @@ def read_tokens(descriptor):
     stack_index = get_stack_index(text)
     text = text.strip()
     while True:
-        read_tokens_from_text(text, tokens)
+        try:
+            read_tokens_from_text(text, tokens)
+        except Exception as e:
+            raise Exception("Error during text: {}\n{}".format(text, e))
         #print "read_expression stack: ", stack
         if has_grouper(tokens):
             text = descriptor.readline()
@@ -629,11 +636,16 @@ def read_tokens(descriptor):
             break
     return tokens, stack_index, texts
 
+def print_tokens(tokens):
+    strings = [str(token) for token in tokens]
+    print "print tokens: ", ", ".join(strings)
+
 def read_expression_lines(lines):
     """
     Lines is a list of strings
     """
     tokens, stack_index, texts = read_tokens(StringIO(string.join(lines)))
+    print_tokens(tokens)
     return build_expression(tokens)
 
 def read_expression_line(text):
@@ -798,7 +810,6 @@ def read_enclosed(stack):
     if isinstance(close, RightParen):
         return ParenGroup(tokens)
     elif isinstance(close, RightBracket):
-        print "paren group with tokens: ", tokens
         return BracketGroup(tokens)
     else:
         return BraceGroup(tokens)

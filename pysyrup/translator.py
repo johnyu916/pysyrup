@@ -1,5 +1,5 @@
 from .parser import (
-    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, ASSERT,
+    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, ASSERT,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -145,6 +145,8 @@ def expression_translate(expression):
                     return [children[0]+ '.remove(' + children[1] + ')']
                 elif data == EXTEND:
                     return [children[0] + '.extend(' + children[1] + ')']
+                elif data == JOIN:
+                    return [children[1] + '.join(' + children[0] + ')']
                 elif data == SQUARE_ROOT:
                     return ['math.sqrt(' + children[0] + ')']
                 elif data == RADIANS:
