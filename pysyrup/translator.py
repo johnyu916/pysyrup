@@ -1,5 +1,5 @@
 from .parser import (
-    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, ASSERT,
+    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, ASSERT,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -121,6 +121,8 @@ def expression_translate(expression):
                 elif data == KEYS:
                     assert len(children) == 1, 'operation keys should only have 1 argument but has: {}'.format(children)
                     return [children[0] + '.keys()']
+                elif data == UPDATE:
+                    return [children[0] + '.update(' + children[1] + ')']
                 elif data == LENGTH:
                     #logging.debug("length of {}: {}".format(children[0], len(children[0])))
                     return ["len(" + children[0] + ")"]

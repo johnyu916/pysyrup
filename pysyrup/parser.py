@@ -44,8 +44,9 @@ BUILT_IN_FUNCTIONS.update([FILE_READ, FILE_WRITE])
 # object methods
 KEYS = 'keys'
 OBJECT_GET = '__object_get__'
+UPDATE = 'update'
 
-BUILT_IN_FUNCTIONS.update([KEYS, OBJECT_GET])
+BUILT_IN_FUNCTIONS.update([KEYS, UPDATE, OBJECT_GET])
 
 # array methods
 ARRAY_MAKE = '__array_make__'
