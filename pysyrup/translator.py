@@ -1,5 +1,5 @@
 from .parser import (
-    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, ASSERT,
+    OPERATORS, BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, FILE_IS_FILE, ASSERT,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -110,6 +110,8 @@ def expression_translate(expression):
                     first = 'with open(' + children[0] + ', "w") as f:'
                     second = '    f.write(' + children[1] + ')'
                     return [first, second]
+                elif data == FILE_IS_FILE:
+                    return ["os.path.isfile(" + children[0] + ")"]
                 elif data == ARRAY_MAKE:
                     return [structure_make(children, BRACKETS)]
                 elif data == ARRAY_GET:
@@ -254,9 +256,10 @@ class Translator(object):
     def __init__(self, output_path, parser):
         with open(output_path, 'w') as f:
             try:
+                f.write('import json\n')
                 f.write('import math\n')
-                f.write('from time import time\n')
-                f.write('import json\n\n')
+                f.write('import os.path\n')
+                f.write('from time import time\n\n')
                 for import_line in parser.imports:
                     text = import_translate(import_line)
                     f.write(text + '\n')

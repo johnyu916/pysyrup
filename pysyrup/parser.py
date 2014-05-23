@@ -39,7 +39,8 @@ BUILT_IN_FUNCTIONS = set()
 # file functions
 FILE_READ = 'file_read'
 FILE_WRITE = 'file_write'
-BUILT_IN_FUNCTIONS.update([FILE_READ, FILE_WRITE])
+FILE_IS_FILE = 'file_is_file'
+BUILT_IN_FUNCTIONS.update([FILE_READ, FILE_WRITE, FILE_IS_FILE])
 
 # object methods
 KEYS = 'keys'
