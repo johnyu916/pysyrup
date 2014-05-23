@@ -161,9 +161,9 @@ def expression_translate(expression):
                     return ['print json.dumps(' + children[0] + ')']
                 elif data == INTEGER_STRING:
                     return ['str(int(' + children[0] + '))']
-                elif data == FROM_JSON:
-                    return ['json.dumps(' + children[0] + ')']
                 elif data == TO_JSON:
+                    return ['json.dumps(' + children[0] + ')']
+                elif data == FROM_JSON:
                     return ['json.loads(' + children[0] + ')']
                 elif data == ASSERT:
                     return ['assert ' + children[0] + ', ' + children[1]]
