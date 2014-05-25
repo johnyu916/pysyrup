@@ -1,6 +1,10 @@
 from parser import read_expression_line, read_expression_lines, read_assignment_line, read_import_line, Import
 
 def test_expression():
+    lines = ['a % b']
+    expression, left = read_expression_lines(lines)
+    assert expression is not None and len(left) == 0, left
+    print "test_expression 0: {} {}".format(expression, left)
     lines = ['[a+b]']
     expression, left = read_expression_lines(lines)
     assert expression is not None

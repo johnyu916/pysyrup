@@ -24,9 +24,9 @@ TRUE = 'true'
 FALSE = 'false'
 BOOLEANS = ['true', 'false']
 NULL = 'null'
-OPERATORS = ['==', '&&', '||', '!=', '+', '-', '*', '/','>=', '<=', '>', '<']
+OPERATORS = ['==', '&&', '||', '!=', '+', '-', '*', '/','>=', '<=', '>', '<', '%']
 SETTERS = ['=', '+=', '-=', '*=', '/=']
-SYMBOLS_PATTERN = '=|!|>|<|\+|-|\*|/|&|\|'
+SYMBOLS_PATTERN = '=|!|>|<|\+|-|\*|/|&|\||%'
 #SETTER_PATTERN = '=|\+=|-='
 RESERVED_WORDS = copy.copy(TYPES)
 RESERVED_WORDS.extend(CONDITIONAL_WORDS)
