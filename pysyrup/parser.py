@@ -79,10 +79,11 @@ BUILT_IN_FUNCTIONS.update([SQUARE_ROOT, RADIANS, TAN, COS, SIN])
 TIME = 'time'
 PRINT = 'print'
 INTEGER_STRING = 'integer_string'
+INTEGER = 'integer'
 TO_JSON = 'to_json'
 FROM_JSON = 'from_json'
 ASSERT = 'assert'
-BUILT_IN_FUNCTIONS.update( [PRINT, INTEGER_STRING, TO_JSON, FROM_JSON, ASSERT])
+BUILT_IN_FUNCTIONS.update( [PRINT, INTEGER, INTEGER_STRING, TO_JSON, FROM_JSON, ASSERT])
 
 # control statements
 CONTINUE = 'continue'

@@ -1,5 +1,5 @@
 from .parser import (
-    BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, FILE_IS_FILE, FILE_LIST_DIR, ASSERT,
+    BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, INTEGER, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, FILE_IS_FILE, FILE_LIST_DIR, ASSERT,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -165,6 +165,8 @@ def expression_translate(expression):
                     return ['print json.dumps(' + children[0] + ')']
                 elif data == INTEGER_STRING:
                     return ['str(int(' + children[0] + '))']
+                elif data == INTEGER:
+                    return ['float(int(' + children[0] + '))']
                 elif data == TO_JSON:
                     return ['json.dumps(' + children[0] + ')']
                 elif data == FROM_JSON:
