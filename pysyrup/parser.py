@@ -40,7 +40,8 @@ BUILT_IN_FUNCTIONS = set()
 FILE_READ = 'file_read'
 FILE_WRITE = 'file_write'
 FILE_IS_FILE = 'file_is_file'
-BUILT_IN_FUNCTIONS.update([FILE_READ, FILE_WRITE, FILE_IS_FILE])
+FILE_LIST_DIR = 'file_list_dir'
+BUILT_IN_FUNCTIONS.update([FILE_READ, FILE_WRITE, FILE_IS_FILE, FILE_LIST_DIR])
 
 # object methods
 KEYS = 'keys'

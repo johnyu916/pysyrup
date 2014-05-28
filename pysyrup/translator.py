@@ -1,5 +1,5 @@
 from .parser import (
-    BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, FILE_IS_FILE, ASSERT,
+    BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, FILE_IS_FILE, FILE_LIST_DIR, ASSERT,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -112,6 +112,8 @@ def expression_translate(expression):
                     return [first, second]
                 elif data == FILE_IS_FILE:
                     return ["os.path.isfile(" + children[0] + ")"]
+                elif data == FILE_LIST_DIR:
+                    return ["os.listdir(" + children[0] + ")"]
                 elif data == ARRAY_MAKE:
                     return [structure_make(children, BRACKETS)]
                 elif data == ARRAY_GET:
