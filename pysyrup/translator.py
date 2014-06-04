@@ -263,6 +263,7 @@ class Translator(object):
                 f.write('import json\n')
                 f.write('import math\n')
                 f.write('import os.path\n')
+                f.write('from random import random\n')
                 f.write('from time import time\n\n')
                 for import_line in parser.imports:
                     text = import_translate(import_line)

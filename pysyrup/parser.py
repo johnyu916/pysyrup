@@ -77,6 +77,7 @@ BUILT_IN_FUNCTIONS.update([SQUARE_ROOT, RADIANS, TAN, COS, SIN])
 
 # etc
 TIME = 'time'
+RANDOM = 'random'
 PRINT = 'print'
 INTEGER_STRING = 'integer_string'
 INTEGER = 'integer'
