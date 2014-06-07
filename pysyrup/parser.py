@@ -210,6 +210,7 @@ class ParenGroup(object):
         self.values = values
 
     def __str__(self):
+        print "parengroup values: ", self.values
         tokens = []
         for value in self.values:
             tokens.append(str(value))
@@ -219,9 +220,21 @@ class BracketGroup(object):
     def __init__(self, values):
         self.values = values
 
+    def __str__(self):
+        tokens = []
+        for value in self.values:
+            tokens.append(str(value))
+        return json.dumps(tokens)
+
 class BraceGroup(object):
     def __init__(self, values):
         self.values = values
+
+    def __str__(self):
+        tokens = []
+        for value in self.values:
+            tokens.append(str(value))
+        return json.dumps(tokens)
 
 class Destination():
     def __init__(self, name, index):
@@ -668,7 +681,7 @@ def read_import_line(text):
 def read_assignment_line(text):
     tokens = []
     read_tokens_from_text(text, tokens)
-    print "read tokens: {}".format(tokens)
+    print_tokens(tokens)
     return read_assignment(tokens)
 
 
@@ -1019,6 +1032,8 @@ def build_array_make(orig):
         expression, left = build_expression(term)
         if expression is None:
             return None, orig
+        if len(left) > 0:
+            return None, orig
         children.append(expression)
 
     expression = Expression(ARRAY_MAKE, children)
@@ -1076,6 +1091,8 @@ def build_function_call(orig):
         print "function call term: ", term
         child, left = build_expression(term)
         if child is None:
+            return None, orig
+        if len(left) > 0:
             return None, orig
         children.append(child)
 
@@ -1252,8 +1269,9 @@ def read_assignment_destination_group(orig):
         expression, left = read_assignment_destination_token(term)
         if expression is None:
             return None, orig
-        else:
-            destinations.append(expression)
+        if len(left) > 0:
+            return None, orig
+        destinations.append(expression)
     return destinations, tokens
 
 
@@ -1406,8 +1424,9 @@ def read_arguments_definition(orig):
         var, new_term = read_arg_definition(term)
         if var is None:
             raise Exception("Unable to read argument: {}".format(term))
-        else:
-            variables.append(var)
+        if len(new_term) > 0:
+            raise Exception("Too many tokens in argument: {}".format(term))
+        variables.append(var)
 
     # see if ended
     return variables, stack

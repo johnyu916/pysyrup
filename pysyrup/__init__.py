@@ -29,6 +29,12 @@ class Syrup(object):
 
         for source_path in source_dir.files("*.syrup"):
             out_filename = source_path.name.split('.')[0] + '.py'
+            out_path = output_dir / out_filename
+            if out_path.exists():
+                if out_path.getmtime() > source_path.getmtime():
+                    # python file is newer than source, skip
+                    continue
+
             self.read_file(source_path, output_dir / out_filename)
         for subdir in source_dir.dirs():
             self.read_dir(subdir, output_dir / subdir.name)

@@ -92,6 +92,10 @@ def test_assignment():
     expression = read_assignment_line(text)
     assert expression is not None
     print "test asignment 2 {}\n {}".format(text, expression)
+    text = 'c = bob(a - 6)'
+    assignment, tokens = read_assignment_line(text)
+    assert assignment is not None and len(tokens) == 0
+    print "test asignment 3 {}\n {}\n {}".format(text, assignment, tokens)
 
 def test_parser():
     expression, left = read_import_line("from shared import translate")
