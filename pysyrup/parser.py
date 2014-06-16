@@ -32,7 +32,7 @@ RESERVED_WORDS = copy.copy(TYPES)
 RESERVED_WORDS.extend(CONDITIONAL_WORDS)
 VARIABLE_PATTERN = '[a-zA-Z][a-zA-Z0-9_]*'
 #STRING_PATTERN = '\"[a-zA-Z0-9_]+\"'
-STRING_PATTERN ='\"(?P<word>[a-zA-Z0-9_ .,/:]*)\"'
+STRING_PATTERN ='\"(?P<word>[a-zA-Z0-9_ .,/:!]*)\"'
 
 BUILT_IN_FUNCTIONS = set()
 
