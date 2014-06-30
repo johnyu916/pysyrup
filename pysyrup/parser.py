@@ -73,6 +73,7 @@ RADIANS = 'radians'
 TAN = 'tan'
 COS = 'cos'
 SIN = 'sin'
+ABS = 'abs'
 
 BUILT_IN_FUNCTIONS.update([SQUARE_ROOT, RADIANS, TAN, COS, SIN])
 

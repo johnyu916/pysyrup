@@ -1,5 +1,5 @@
 from .parser import (
-    BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SPLIT, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, INTEGER, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, FILE_IS_FILE, FILE_LIST_DIR, ASSERT, ARRAY_FLOAT,
+    BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SPLIT, SQUARE_ROOT, RADIANS, TAN, COS, SIN, ABS, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, INTEGER, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, FILE_IS_FILE, FILE_LIST_DIR, ASSERT, ARRAY_FLOAT,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -163,6 +163,8 @@ def expression_translate(expression):
                     return ['math.cos(' + children[0] + ')']
                 elif data == SIN:
                     return ['math.sin(' + children[0] + ')']
+                elif data == ABS:
+                    return ['math.abs(' + children[0] + ')']
                 elif data == PRINT:
                     return ['print json.dumps(' + children[0] + ', cls=SyrupEncoder)']
                 elif data == INTEGER_STRING:
