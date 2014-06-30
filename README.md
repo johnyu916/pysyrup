@@ -18,3 +18,7 @@ There must be spaces between operations and operands. For example:
 
 a - b
 a + b
+
+TODO:
+
+Introduce the integer type

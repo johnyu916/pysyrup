@@ -64,7 +64,8 @@ BUILT_IN_FUNCTIONS.update( [ARRAY_MAKE, ARRAY_GET, LENGTH, RANGE, POP, REMOVE, A
 
 # string methods
 JOIN = 'join'
-BUILT_IN_FUNCTIONS.update( [JOIN] )
+SPLIT = 'split'
+BUILT_IN_FUNCTIONS.update( [JOIN, SPLIT] )
 
 # math functions
 SQUARE_ROOT = 'square_root'
@@ -84,7 +85,9 @@ INTEGER = 'integer'
 TO_JSON = 'to_json'
 FROM_JSON = 'from_json'
 ASSERT = 'assert'
-BUILT_IN_FUNCTIONS.update( [PRINT, INTEGER, INTEGER_STRING, TO_JSON, FROM_JSON, ASSERT])
+ARRAY_FLOAT = 'array_float'
+
+BUILT_IN_FUNCTIONS.update( [PRINT, INTEGER, INTEGER_STRING, TO_JSON, FROM_JSON, ASSERT, ARRAY_FLOAT])
 
 # control statements
 CONTINUE = 'continue'

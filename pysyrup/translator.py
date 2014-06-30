@@ -1,5 +1,5 @@
 from .parser import (
-    BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, INTEGER, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, FILE_IS_FILE, FILE_LIST_DIR, ASSERT,
+    BUILT_IN_FUNCTIONS, ARRAY_MAKE, ARRAY_GET, OBJECT_GET, KEYS, UPDATE, LENGTH, RANGE, JOIN, SPLIT, SQUARE_ROOT, RADIANS, TAN, COS, SIN, APPEND, INSERT, EXTEND, POP, REMOVE, INTEGER_STRING, INTEGER, NULL, BREAK, RETURN, PRINT, TO_JSON, FROM_JSON, STRING, BOOL, NUMBER, ARRAY, OBJECT, TRUE, FILE_READ, FILE_WRITE, FILE_IS_FILE, FILE_LIST_DIR, ASSERT, ARRAY_FLOAT,
     PARENS, BRACKETS, BRACES,
     Object, While, For, If, Else, Elif, FlowControl, Expression, Assignment, Constant, Null, Name, Operator
 )
@@ -151,6 +151,8 @@ def expression_translate(expression):
                     return [children[0] + '.extend(' + children[1] + ')']
                 elif data == JOIN:
                     return [children[1] + '.join(' + children[0] + ')']
+                elif data == SPLIT:
+                    return [children[0] + '.split(' + children[1] + ')']
                 elif data == SQUARE_ROOT:
                     return ['math.sqrt(' + children[0] + ')']
                 elif data == RADIANS:
@@ -162,17 +164,19 @@ def expression_translate(expression):
                 elif data == SIN:
                     return ['math.sin(' + children[0] + ')']
                 elif data == PRINT:
-                    return ['print json.dumps(' + children[0] + ')']
+                    return ['print json.dumps(' + children[0] + ', cls=SyrupEncoder)']
                 elif data == INTEGER_STRING:
                     return ['str(int(' + children[0] + '))']
                 elif data == INTEGER:
                     return ['float(int(' + children[0] + '))']
                 elif data == TO_JSON:
-                    return ['json.dumps(' + children[0] + ')']
+                    return ['json.dumps(' + children[0] + ', cls=SyrupEncoder)']
                 elif data == FROM_JSON:
                     return ['json.loads(' + children[0] + ')']
                 elif data == ASSERT:
                     return ['assert ' + children[0] + ', ' + children[1]]
+                elif data == ARRAY_FLOAT:
+                    return ['numpy.array(' + children[0] + ', "f")']
                 else:
                     raise Exception("Not implemented: {}".format(data))
             else:
@@ -261,10 +265,12 @@ class Translator(object):
         with open(output_path, 'w') as f:
             try:
                 f.write('import json\n')
+                f.write('from plugins.jsonsyrup import SyrupEncoder\n')
                 f.write('import math\n')
                 f.write('import os.path\n')
                 f.write('from random import random\n')
-                f.write('from time import time\n\n')
+                f.write('from time import time\n')
+                f.write('import numpy\n\n')
                 for import_line in parser.imports:
                     text = import_translate(import_line)
                     f.write(text + '\n')
