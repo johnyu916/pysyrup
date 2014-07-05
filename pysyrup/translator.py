@@ -167,6 +167,7 @@ def expression_translate(expression):
                     return ['math.abs(' + children[0] + ')']
                 elif data == PRINT:
                     return ['print json.dumps(' + children[0] + ', cls=SyrupEncoder)']
+                    #return ['print json.dumps(' + children[0] + ')']
                 elif data == INTEGER_STRING:
                     return ['str(int(' + children[0] + '))']
                 elif data == INTEGER:
